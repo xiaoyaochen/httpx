@@ -12,7 +12,7 @@ import (
 
 	"github.com/PuerkitoBio/goquery"
 	jsoniter "github.com/json-iterator/go"
-	log "github.com/sirupsen/logrus"
+	"github.com/projectdiscovery/gologger"
 )
 
 type temp struct {
@@ -126,7 +126,7 @@ func parseTechnologiesFile(appsFile *[]byte, wapp *Wappalyzer) error {
 	temporary := &temp{}
 	err := json.Unmarshal(*appsFile, &temporary)
 	if err != nil {
-		log.Errorf("Couldn't unmarshal apps.json file: %s\n", err)
+		gologger.Error().Msgf("Couldn't unmarshal apps.json file: %s\n", err)
 		return err
 	}
 	wapp.Apps = make(map[string]*application)
@@ -134,7 +134,7 @@ func parseTechnologiesFile(appsFile *[]byte, wapp *Wappalyzer) error {
 	for k, v := range temporary.Categories {
 		catg := &category{}
 		if err = json.Unmarshal(*v, catg); err != nil {
-			log.Errorf("[!] Couldn't unmarshal Categories: %s\n", err)
+			gologger.Error().Msgf("[!] Couldn't unmarshal Categories: %s\n", err)
 			return err
 		}
 		catID, err := strconv.Atoi(k)
@@ -147,14 +147,14 @@ func parseTechnologiesFile(appsFile *[]byte, wapp *Wappalyzer) error {
 		}
 	}
 	if len(wapp.Categories) < 1 {
-		log.Errorf("Couldn't find categories in technologies file")
+		gologger.Error().Msgf("Couldn't find categories in technologies file")
 		return errors.New("NoCategoryFound")
 	}
 	for k, v := range temporary.Apps {
 		app := &application{}
 		app.Name = k
 		if err = json.Unmarshal(*v, app); err != nil {
-			log.Errorf("Couldn't unmarshal Apps: %s\n", err)
+			gologger.Error().Msgf("Couldn't unmarshal Apps: %s\n", err)
 			return err
 		}
 		parseCategories(app, &wapp.Categories)
@@ -162,7 +162,7 @@ func parseTechnologiesFile(appsFile *[]byte, wapp *Wappalyzer) error {
 		wapp.Apps[k] = app
 	}
 	if len(wapp.Apps) < 1 {
-		log.Errorf("Couldn't find technologies in technologies file")
+		gologger.Error().Msgf("Couldn't find technologies in technologies file")
 		return errors.New("NoTechnologyFound")
 	}
 	return err
@@ -248,16 +248,16 @@ func parseCategories(app *application, categoriesCatalog *map[string]*extendedCa
 func InitApp(appsjsonpath string) (wapp *Wappalyzer, err error) {
 	var appsFile []byte
 	if appsjsonpath != "" {
-		log.Infof("Trying to open technologies file at %s", appsjsonpath)
+		gologger.Info().Msgf("Trying to open technologies file at %s", appsjsonpath)
 		appsFile, err = ioutil.ReadFile(appsjsonpath)
 		if err != nil {
-			log.Warningf("Couldn't open file at %s\n", appsjsonpath)
+			gologger.Warning().Msgf("Couldn't open file at %s\n", appsjsonpath)
 		} else {
-			log.Infof("Technologies file opened")
+			gologger.Info().Msgf("Technologies file opened")
 		}
 	}
 	if appsjsonpath == "" || len(appsFile) == 0 {
-		log.Infof("Loading technologies default %s", appsjsonpath)
+		gologger.Info().Msgf("Loading technologies default %s", appsjsonpath)
 		appsFile = []byte(technologies)
 	}
 	wapp = &Wappalyzer{}
@@ -309,7 +309,7 @@ func parsePatterns(patterns interface{}) (result map[string][]*pattern) {
 					parsed[k] = append(parsed[k], v1.(string))
 				}
 			default:
-				log.Errorf("Unknown type in parsePatterns: %T\n", v)
+				gologger.Error().Msgf("Unknown type in parsePatterns: %T\n", v)
 			}
 		}
 	case []interface{}:
@@ -319,7 +319,7 @@ func parsePatterns(patterns interface{}) (result map[string][]*pattern) {
 		}
 		parsed["main"] = slice
 	default:
-		log.Errorf("Unknown type in parsePatterns: %T\n", ptrn)
+		gologger.Error().Msgf("Unknown type in parsePatterns: %T\n", ptrn)
 	}
 	result = make(map[string][]*pattern)
 	for k, v := range parsed {
