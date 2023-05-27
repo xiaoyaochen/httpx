@@ -57,19 +57,19 @@ import (
 	"github.com/projectdiscovery/httpx/common/httpx"
 	"github.com/projectdiscovery/httpx/common/slice"
 	"github.com/projectdiscovery/httpx/common/stringz"
+	"github.com/projectdiscovery/httpx/common/wap"
 	"github.com/projectdiscovery/mapcidr"
 	"github.com/projectdiscovery/rawhttp"
 	fileutil "github.com/projectdiscovery/utils/file"
 	pdhttputil "github.com/projectdiscovery/utils/http"
 	iputil "github.com/projectdiscovery/utils/ip"
-	wappalyzer "github.com/projectdiscovery/wappalyzergo"
 )
 
 // Runner is a client for running the enumeration process.
 type Runner struct {
 	options         *Options
 	hp              *httpx.HTTPX
-	wappalyzer      *wappalyzer.Wappalyze
+	wappalyzer      *wap.Wappalyzer
 	fastdialer      *fastdialer.Dialer
 	scanopts        ScanOptions
 	hm              *hybrid.HybridMap
@@ -86,7 +86,7 @@ func New(options *Options) (*Runner, error) {
 	}
 	var err error
 	if options.TechDetect {
-		runner.wappalyzer, err = wappalyzer.New()
+		runner.wappalyzer, err = wap.InitApp("")
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create wappalyzer client")
@@ -1478,9 +1478,9 @@ retry:
 
 	var technologies []string
 	if scanopts.TechDetect {
-		matches := r.wappalyzer.Fingerprint(resp.Headers, resp.Data)
-		for match := range matches {
-			technologies = append(technologies, match)
+		matches := r.wappalyzer.Fingerprint(resp.Headers, resp.Data, resp.GetChainLastURL())
+		for _, match := range matches {
+			technologies = append(technologies, match.Name)
 		}
 
 		if len(technologies) > 0 {

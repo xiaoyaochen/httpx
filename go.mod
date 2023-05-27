@@ -39,6 +39,7 @@ require (
 	github.com/bxcodec/faker/v4 v4.0.0-beta.3
 	github.com/go-rod/rod v0.112.9
 	github.com/hdm/jarm-go v0.0.7
+	github.com/json-iterator/go v1.1.12
 	github.com/mfonda/simhash v0.0.0-20151007195837-79f94a1100d6
 	github.com/mitchellh/mapstructure v1.5.0
 	github.com/projectdiscovery/asnmap v1.0.3
@@ -47,7 +48,9 @@ require (
 	github.com/projectdiscovery/ratelimit v0.0.6
 	github.com/projectdiscovery/tlsx v1.0.9
 	github.com/projectdiscovery/utils v0.0.29
+	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.8.2
+	github.com/yinheli/mahonia v0.0.0-20131226213531-0eef680515cc
 	go.uber.org/multierr v1.11.0
 	golang.org/x/exp v0.0.0-20230420155640-133eef4313cb
 )
@@ -80,7 +83,6 @@ require (
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/gorilla/css v1.0.0 // indirect
 	github.com/hashicorp/go-version v1.6.0 // indirect
-	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/kataras/jwt v0.1.8 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect

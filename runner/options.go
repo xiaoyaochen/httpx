@@ -70,6 +70,7 @@ type ScanOptions struct {
 	NoFallback                bool
 	NoFallbackScheme          bool
 	TechDetect                bool
+	TechDetectFile            string
 	StoreChain                bool
 	MaxResponseBodySizeToSave int
 	MaxResponseBodySizeToRead int
@@ -120,6 +121,7 @@ func (s *ScanOptions) Clone() *ScanOptions {
 		NoFallback:                s.NoFallback,
 		NoFallbackScheme:          s.NoFallbackScheme,
 		TechDetect:                s.TechDetect,
+		TechDetectFile:            s.TechDetectFile,
 		StoreChain:                s.StoreChain,
 		OutputExtractRegex:        s.OutputExtractRegex,
 		MaxResponseBodySizeToSave: s.MaxResponseBodySizeToSave,
@@ -211,6 +213,7 @@ type Options struct {
 	NoFallback                bool
 	NoFallbackScheme          bool
 	TechDetect                bool
+	TechDetectFile            string
 	TLSGrab                   bool
 	protocol                  string
 	ShowStatistics            bool
@@ -296,6 +299,7 @@ func ParseOptions() *Options {
 		flagSet.BoolVar(&options.ExtractTitle, "title", false, "display page title"),
 		flagSet.BoolVarP(&options.OutputServerHeader, "web-server", "server", false, "display server name"),
 		flagSet.BoolVarP(&options.TechDetect, "tech-detect", "td", false, "display technology in use based on wappalyzer dataset"),
+		flagSet.StringVar(&options.TechDetectFile, "tech-detect-file", "", "the path for wappalyzer technology"),
 		flagSet.BoolVar(&options.OutputMethod, "method", false, "display http request method"),
 		flagSet.BoolVar(&options.OutputWebSocket, "websocket", false, "display server using websocket"),
 		flagSet.BoolVar(&options.OutputIP, "ip", false, "display host ip"),
