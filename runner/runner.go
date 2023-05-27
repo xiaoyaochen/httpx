@@ -86,7 +86,7 @@ func New(options *Options) (*Runner, error) {
 	}
 	var err error
 	if options.TechDetect {
-		runner.wappalyzer, err = wap.InitApp("")
+		runner.wappalyzer, err = wap.InitApp(runner.options.TechDetectFile)
 	}
 	if err != nil {
 		return nil, errors.Wrap(err, "could not create wappalyzer client")
