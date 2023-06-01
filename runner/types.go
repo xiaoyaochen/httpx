@@ -47,7 +47,7 @@ type Result struct {
 	ContentType        string                 `json:"content_type,omitempty" csv:"content_type"`
 	Method             string                 `json:"method,omitempty" csv:"method"`
 	Host               string                 `json:"host,omitempty" csv:"host"`
-	Rdata              string                 `json:"rdata,omitempty" csv:"rdata"`
+	Rrname             string                 `json:"rrname,omitempty" csv:"rrname"`
 	Path               string                 `json:"path,omitempty" csv:"path"`
 	FavIconMMH3        string                 `json:"favicon,omitempty" csv:"favicon"`
 	FaviconPath        string                 `json:"favicon_path,omitempty" csv:"favicon_path"`

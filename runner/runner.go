@@ -1715,13 +1715,13 @@ retry:
 			}
 		}
 	}
-	var rdata string
+	var rrname string
 	if target.CustomIP != "" {
 		u, err := url.Parse(target.Host)
 		if err != nil || u.Host == "" {
-			rdata = strings.Split(target.Host, ":")[0]
+			rrname = strings.Split(target.Host, ":")[0]
 		} else {
-			rdata = strings.Split(u.Host, ":")[0]
+			rrname = strings.Split(u.Host, ":")[0]
 		}
 	}
 	result := Result{
@@ -1753,7 +1753,7 @@ retry:
 		HTTP2:              http2,
 		Method:             method,
 		Host:               ip,
-		Rdata:              rdata,
+		Rrname:             rrname,
 		A:                  ips,
 		CNAMEs:             cnames,
 		CDN:                isCDN,
