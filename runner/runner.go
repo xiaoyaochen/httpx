@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/http/httputil"
+	"net/url"
 	"os"
 	"path"
 	"path/filepath"
@@ -1063,7 +1064,19 @@ func (r *Runner) targets(hp *httpx.HTTPX, target string) chan httpx.Target {
 			idxComma := strings.Index(target, ",")
 			results <- httpx.Target{Host: target[idxComma+1:], CustomHost: target[:idxComma]}
 		default:
-			results <- httpx.Target{Host: target}
+			if strings.Contains(target, fmt.Sprint("+")) {
+				t := strings.Split(target, fmt.Sprint("+"))
+				// u, err := url.Parse(t[0])
+				// var host string
+				// if err != nil || u.Host == "" {
+				// 	host = t[0]
+				// } else {
+				// 	host = u.Host
+				// }
+				results <- httpx.Target{Host: t[0], CustomIP: t[1]}
+			} else {
+				results <- httpx.Target{Host: target}
+			}
 		}
 	}()
 	return results
@@ -1702,7 +1715,15 @@ retry:
 			}
 		}
 	}
-
+	var rdata string
+	if target.CustomIP != "" {
+		u, err := url.Parse(target.Host)
+		if err != nil || u.Host == "" {
+			rdata = strings.Split(target.Host, ":")[0]
+		} else {
+			rdata = strings.Split(u.Host, ":")[0]
+		}
+	}
 	result := Result{
 		Timestamp:          time.Now(),
 		Request:            request,
@@ -1732,6 +1753,7 @@ retry:
 		HTTP2:              http2,
 		Method:             method,
 		Host:               ip,
+		Rdata:              rdata,
 		A:                  ips,
 		CNAMEs:             cnames,
 		CDN:                isCDN,
