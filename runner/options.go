@@ -21,6 +21,7 @@ import (
 	"github.com/projectdiscovery/httpx/common/customheader"
 	"github.com/projectdiscovery/httpx/common/customlist"
 	customport "github.com/projectdiscovery/httpx/common/customports"
+	"github.com/projectdiscovery/httpx/common/db"
 	fileutilz "github.com/projectdiscovery/httpx/common/fileutil"
 	"github.com/projectdiscovery/httpx/common/slice"
 	"github.com/projectdiscovery/httpx/common/stringz"
@@ -183,6 +184,8 @@ type Options struct {
 	FollowRedirects           bool
 	StoreResponse             bool
 	JSONOutput                bool
+	DBOutput                  string
+	DB                        db.DB
 	CSVOutput                 bool
 	CSVOutputEncoding         string
 	Silent                    bool
@@ -371,6 +374,7 @@ func ParseOptions() *Options {
 
 	flagSet.CreateGroup("output", "Output",
 		flagSet.StringVarP(&options.Output, "output", "o", "", "file to write output results"),
+		flagSet.StringVarP(&options.DBOutput, "dboutput", "db", "", "db to write output results (-json only) eg.dburl+dbname+collection"),
 		flagSet.BoolVarP(&options.StoreResponse, "store-response", "sr", false, "store http response to output directory"),
 		flagSet.StringVarP(&options.StoreResponseDir, "store-response-dir", "srd", "", "store http response to custom directory"),
 		flagSet.BoolVar(&options.CSVOutput, "csv", false, "store output in csv format"),
@@ -593,7 +597,13 @@ func (options *Options) ValidateOptions() error {
 	if len(options.OutputMatchCdn) > 0 || len(options.OutputFilterCdn) > 0 {
 		options.OutputCDN = true
 	}
-
+	if options.DBOutput != "" {
+		if len(strings.Split(options.DBOutput, "+")) != 3 {
+			return fmt.Errorf("Invalid value for match DBOutput option")
+		} else {
+			options.DB = db.NewMqProducer(options.DBOutput)
+		}
+	}
 	return nil
 }
 

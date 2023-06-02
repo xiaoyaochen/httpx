@@ -4,7 +4,9 @@ import (
 	"bufio"
 	"bytes"
 	"context"
+	"crypto/md5"
 	"encoding/csv"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -859,6 +861,16 @@ func (r *Runner) RunEnumeration() {
 			if f != nil {
 				//nolint:errcheck // this method needs a small refactor to reduce complexity
 				f.WriteString(row + "\n")
+			}
+			if r.options.DBOutput != "" {
+				doc, err := json.Marshal(resp)
+				hash := md5.Sum([]byte(resp.Host + resp.Port + resp.Rrname))
+				docid := hex.EncodeToString(hash[:])
+				if err != nil {
+					gologger.Error().Msgf("Could not Marshal resp: %s\n", err)
+				} else {
+					err = r.options.DB.Push(docid, doc)
+				}
 			}
 		}
 	}(output)
