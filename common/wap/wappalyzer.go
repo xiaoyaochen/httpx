@@ -356,15 +356,18 @@ func parsePatterns(patterns interface{}) (result map[string][]*pattern) {
 }
 
 func AnalyzePage(httpData *HttpData, wapp *Wappalyzer) (err error) {
-	// var wg sync.WaitGroup
-	// pool := make(chan int, 30)
 	detectedApplications := &detected{new(sync.Mutex), make(map[string]*resultApp)}
 	for _, app := range wapp.Apps {
 		if app.URL != nil {
 			analyzeURL(app, httpData.ResURL, detectedApplications)
 		}
-		if app.HTML != nil {
-			analyzeHTML(app, httpData.HTML, detectedApplications)
+		htmlLen := len(httpData.HTML)
+		if htmlLen > 0 && app.HTML != nil {
+			if htmlLen < 6000 {
+				analyzeHTML(app, httpData.HTML, detectedApplications)
+			} else {
+				analyzeHTML(app, httpData.HTML[:3000]+httpData.HTML[htmlLen-3000:], detectedApplications)
+			}
 		}
 		if len(httpData.Headers) > 0 && app.Headers != nil {
 			analyzeHeaders(app, httpData.Headers, detectedApplications)
