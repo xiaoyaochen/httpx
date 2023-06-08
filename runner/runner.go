@@ -1481,10 +1481,13 @@ retry:
 	if scanopts.OutputIP || scanopts.ProbeAllIPS {
 		builder.WriteString(fmt.Sprintf(" [%s]", ip))
 	}
-
-	ips, cnames, err := getDNSData(hp, URL.Host)
-	if err != nil {
-		ips = append(ips, ip)
+	//如果输入格式为解析dns解析记录域名+ip形式，则取消dns解析
+	var ips, cnames []string
+	if target.CustomIP == "" {
+		ips, cnames, err = getDNSData(hp, URL.Host)
+		if err != nil {
+			ips = append(ips, ip)
+		}
 	}
 
 	if scanopts.OutputCName && len(cnames) > 0 {

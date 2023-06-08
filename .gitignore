@@ -10,3 +10,5 @@ cmd/functional-test/*.cfg
 *.json
 *.csv
 httpx
+naabu
+resume.cfg
